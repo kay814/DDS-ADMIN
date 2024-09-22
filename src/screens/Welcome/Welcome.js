@@ -11,7 +11,7 @@ const WelcomeScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.text}>Welcome To DDS Admin</Text>
       </View>
-      <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate('Dashboard')}>
+      <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate('LoginScreen')}>
         <Icon name="arrow-right" size={80} color="white" /> 
       </TouchableOpacity>
     </ImageBackground>
