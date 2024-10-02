@@ -1,12 +1,11 @@
 import { initializeApp } from 'firebase/app';
-
 const firebaseConfig = {
-    apiKey: "AIzaSyDEZQ_paJYpVCrDpdyUzpOgswhdAKBHu00",
-    authDomain: "digital-dining-solutions.firebaseapp.com",
-    projectId: "digital-dining-solutions",
-    storageBucket: "digital-dining-solutions.appspot.com",
-    messagingSenderId: "500080739577",
-    appId: "1:500080739577:web:4b9696ac7696866981ce28"
-  };
+  apiKey: "AIzaSyBbzOR6g0a6W38Lv0y-J54Pj2vnVywsqiU",
+  authDomain: "legal-aid-293d7.firebaseapp.com",
+  projectId: "legal-aid-293d7",
+  storageBucket: "legal-aid-293d7.appspot.com",
+  messagingSenderId: "253836754013",
+  appId: "1:253836754013:web:dc430d0cacae0998a021b4"
+};
 const app = initializeApp(firebaseConfig);
 export default app;

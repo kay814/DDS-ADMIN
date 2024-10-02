@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import OrdersImage from '../../../assets/check-out.png'; 
-import FeedbackImage from '../../../assets/feedback.png'; 
-import ProfileIcon from '../../../assets/boy.png'; 
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import OrdersImage from '../../../assets/case.png'; 
+import FeedbackImage from '../../../assets/legal-advice.png'; 
+import ProfileIcon from '../../../assets/user.png'; 
+import BackgroundImage from '../../../assets/bcc.jpg'; // Import background image
 
 const DashboardScreen = ({ navigation }) => {
   const [currentTime, setCurrentTime] = useState('');
@@ -11,14 +11,13 @@ const DashboardScreen = ({ navigation }) => {
   const [day, setDay] = useState('');
   const [fullDate, setFullDate] = useState('');
 
-
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleTimeString('en-GB')); 
-      setCurrentDate(now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })); // DD/MM/YYYY format
+      setCurrentDate(now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })); 
       setDay(now.toLocaleDateString('en-GB', { weekday: 'long' })); 
-      setFullDate(now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })); // Display full date format
+      setFullDate(now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })); 
     };
 
     updateClock(); 
@@ -27,44 +26,46 @@ const DashboardScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-    
-      <View style={styles.topRow}>
-       
-        <View style={styles.dateTimeContainer}>
-          <Text style={styles.dayText}>{day}</Text>
-          <Text style={styles.fullDateText}>{fullDate}</Text>
-          <Text style={styles.timeText}>{currentTime}</Text>
+    <ImageBackground source={BackgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <View style={styles.topRow}>
+          <View style={styles.dateTimeContainer}>
+            <Text style={styles.dayText}>{day}</Text>
+            <Text style={styles.fullDateText}>{fullDate}</Text>
+            <Text style={styles.timeText}>{currentTime}</Text>
+          </View>
+
+          <View style={styles.profileSection}>
+            <Image source={ProfileIcon} style={styles.profileImage} />
+            <Text style={styles.profileName}>welcome, Francis</Text>
+          </View>
         </View>
 
-       
-        <View style={styles.profileSection}>
-          <Image source={ProfileIcon} style={styles.profileImage} />
-          <Text style={styles.profileName}>James</Text>
+        <View style={styles.imageRow}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Orders')}>
+            <Image source={OrdersImage} style={styles.image} />
+            <Text style={styles.cardText}>Cases</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Feedbacks')}>
+            <Image source={FeedbackImage} style={styles.image} />
+            <Text style={styles.cardText}>Reports</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-     
-      <View style={styles.imageRow}>
-        <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Orders')}>
-          <Image source={OrdersImage} style={styles.image} />
-          <Text>Orders</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Feedbacks')}>
-          <Image source={FeedbackImage} style={styles.image} />
-          <Text>Feedbacks</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   topRow: {
     flexDirection: 'row',
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   dateTimeContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'black',
     padding: 15,
     borderRadius: 10,
     shadowColor: '#000',
@@ -82,28 +83,28 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
     alignItems: 'flex-start',
-    width: '45%', // Adjust width as needed for a calendar-like look
+    width: '45%',
   },
   dayText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#4285F4',
     marginBottom: 2,
   },
   fullDateText: {
     fontSize: 16,
-    color: '#555',
+    color: 'white',
     marginBottom: 10,
   },
   timeText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4285F4',
+    color: 'white',
   },
   profileSection: {
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: 'black',
     padding: 10,
     borderRadius: 10,
     shadowColor: '#000',
@@ -119,9 +120,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   profileName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
   },
   imageRow: {
     flexDirection: 'row',
@@ -129,9 +130,24 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-  imageContainer: {
+  card: {
     alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 10,
     marginHorizontal: 20,
+    width: 150, // Adjust to make it bigger
+  },
+  cardText: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   image: {
     width: 100,

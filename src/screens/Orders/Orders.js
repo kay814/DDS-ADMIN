@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, Alert } from 'react-native';
-import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore'; 
+import { getFirestore, collection, getDocs } from 'firebase/firestore'; 
 import app from '../Authentication/Config/Config'; 
-import Checkbox from 'expo-checkbox'; // Replaced the checkbox import with expo-checkbox
 
-const OrdersScreen = () => {
-  const [orders, setOrders] = useState([]);
+const CasesScreen = () => {
+  const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const db = getFirestore(app);
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchCases = async () => {
       try {
-        const snapshot = await getDocs(collection(db, 'Checkouts')); 
-        const ordersData = snapshot.docs.map(doc => ({
+        const casesSnapshot = await getDocs(collection(db, 'Cases'));
+        const casesData = casesSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-          orderReceived: doc.data().orderReceived || false,
-          orderProcessing: doc.data().orderProcessing || false,
-          courierOnTheWay: doc.data().courierOnTheWay || false,
-          orderDelivered: doc.data().orderDelivered || false,
         }));
-        setOrders(ordersData);
+
+        setCases(casesData);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -31,27 +27,8 @@ const OrdersScreen = () => {
       }
     };
 
-    fetchOrders();
+    fetchCases();
   }, []);
-
-  const handleStatusUpdate = async (orderId, statusKey, newValue) => {
-    try {
-      const orderRef = doc(db, 'Checkouts', orderId);
-      await updateDoc(orderRef, { [statusKey]: newValue });
-      Alert.alert("Success", `Status updated to: ${statusKey.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
-    } catch (error) {
-      Alert.alert("Error", "Failed to update the status. Please try again.");
-      console.error("Error updating status:", error);
-    }
-  };
-
-  const toggleStatus = (orderId, statusKey, currentStatus) => {
-    const updatedOrders = orders.map(order => 
-      order.id === orderId ? { ...order, [statusKey]: !currentStatus } : order
-    );
-    setOrders(updatedOrders);
-    handleStatusUpdate(orderId, statusKey, !currentStatus);
-  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -65,77 +42,24 @@ const OrdersScreen = () => {
     );
   }
 
-  const renderOrderItem = ({ item }) => {
-    const checkoutTime = new Date(item.checkoutTime); // Parse ISO string
-
-    return (
-      <View style={styles.card}>
-        <Text style={styles.orderId}>Order ID: {item.id}</Text>
-        <Text style={styles.customerEmail}>Customer Email: {item.customerData?.email || "No email provided"}</Text>
-        
-        {item.cartItems && item.cartItems.map((cartItem, index) => (
-          <View key={index} style={styles.itemContainer}>
-            <Text style={styles.itemText}>Item: {cartItem.name}</Text>
-            <Text style={styles.itemText}>Price: ${cartItem.price}</Text>
-            <Text style={styles.itemText}>Quantity: {cartItem.quantity}</Text>
-          </View>
-        ))}
-
-        <Text style={styles.checkoutTime}>Checkout Time: {checkoutTime.toLocaleString()}</Text>
-        <Text style={styles.totalPrice}>Total Price: ${item.totalPrice.toFixed(2)}</Text>
-
-        {/* Tracking Status Checkboxes */}
-        <View style={styles.statusContainer}>
-          <View style={styles.statusItem}>
-            <Checkbox
-              style={styles.checkbox}
-              value={item.orderReceived}
-              onValueChange={() => toggleStatus(item.id, 'orderReceived', item.orderReceived)}
-              color={item.orderReceived ? '#4630EB' : undefined} // Optional color based on status
-            />
-            <Text>Order Received</Text>
-          </View>
-
-          <View style={styles.statusItem}>
-            <Checkbox
-              style={styles.checkbox}
-              value={item.orderProcessing}
-              onValueChange={() => toggleStatus(item.id, 'orderProcessing', item.orderProcessing)}
-              color={item.orderProcessing ? '#4630EB' : undefined}
-            />
-            <Text>Order Processing</Text>
-          </View>
-
-          <View style={styles.statusItem}>
-            <Checkbox
-              style={styles.checkbox}
-              value={item.courierOnTheWay}
-              onValueChange={() => toggleStatus(item.id, 'courierOnTheWay', item.courierOnTheWay)}
-              color={item.courierOnTheWay ? '#4630EB' : undefined}
-            />
-            <Text>Courier On The Way</Text>
-          </View>
-
-          <View style={styles.statusItem}>
-            <Checkbox
-              style={styles.checkbox}
-              value={item.orderDelivered}
-              onValueChange={() => toggleStatus(item.id, 'orderDelivered', item.orderDelivered)}
-              color={item.orderDelivered ? '#4630EB' : undefined}
-            />
-            <Text>Order Delivered</Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
+  const renderCaseItem = ({ item }) => (
+    <View style={styles.card}>
+      <Text style={styles.caseId}>Case ID: {item.id}</Text>
+      <Text style={styles.caseEmail}>Email: {item.email}</Text>
+      <Text style={styles.caseIssues}>Issues: {item.issues}</Text>
+      <Text style={styles.casePhoneNumber}>Phone Number: {item.phoneNumber}</Text>
+      <Text style={[styles.caseStatus, { color: item.taken ? '#10B981' : '#EF4444' }]}>
+        Taken: {item.taken ? 'Yes' : 'No'}
+      </Text>
+    </View>
+  );
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Orders</Text>
+      <Text style={styles.title}>Cases</Text>
       <FlatList
-        data={orders}
-        renderItem={renderOrderItem}
+        data={cases}
+        renderItem={renderCaseItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -146,79 +70,66 @@ const OrdersScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-    padding: 10,
+    backgroundColor: '#F8F9FC', // Slightly off-white for a soft look
+    padding: 20,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontWeight: '700',
     textAlign: 'center',
-    marginVertical: 20,
-    color: '#333',
+    color: '#0A2540', // Rich dark blue for elegance
+    marginBottom: 20,
+    letterSpacing: 1.2,
   },
   listContainer: {
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
     padding: 20,
-    marginVertical: 10,
+    marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
+    shadowRadius: 10,
+    elevation: 17,
+    borderWidth: 3,
+    borderColor: '#E3E8F0',
   },
-  orderId: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#555',
+  caseId: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1F2937', // Dark gray for strong visibility
+    marginBottom: 12,
+  },
+  caseEmail: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#6B7280', // Subtle gray for text details
     marginBottom: 10,
   },
-  customerEmail: {
-    fontSize: 14,
-    color: '#777',
+  caseIssues: {
+    fontSize: 16,
+    color: '#374151', // Darker gray for better contrast
     marginBottom: 10,
   },
-  itemContainer: {
-    marginTop: 10,
-    paddingVertical: 5,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-  },
-  itemText: {
-    fontSize: 14,
-    color: '#333',
-  },
-  checkoutTime: {
-    marginTop: 15,
-    fontSize: 14,
-    color: '#999',
-  },
-  totalPrice: {
-    marginTop: 10,
+  casePhoneNumber: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    color: '#374151',
+    marginBottom: 10,
+  },
+  caseStatus: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginTop: 10,
   },
   errorText: {
     fontSize: 18,
-    color: 'red',
+    color: '#D32F2F', // Red color for error messaging
     textAlign: 'center',
     marginTop: 20,
   },
-  statusContainer: {
-    marginTop: 20,
-  },
-  statusItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  checkbox: {
-    marginRight: 8,
-  },
 });
 
-export default OrdersScreen;
+export default CasesScreen;

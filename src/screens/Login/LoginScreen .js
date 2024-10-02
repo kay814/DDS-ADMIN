@@ -1,6 +1,5 @@
-// LoginScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
@@ -8,21 +7,27 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false); // New state for loading
   const navigation = useNavigation(); // Initialize navigation
 
   // Handle Login Function
   const handleLogin = () => {
-    if (email === 'dds@gmail.com' && password === 'DDs-172839-GH') {
-      Alert.alert('Success', 'Welcome to the Admin Dashboard!');
-      navigation.navigate('Dashboard'); // Navigate to the Dashboard screen
-    } else {
-      Alert.alert('Error', 'Invalid email or password.');
-    }
+    setLoading(true); // Start loading
+
+    setTimeout(() => {
+      setLoading(false); // Stop loading after 3 seconds
+      if (email === 'legaladmin@gmail.com' && password === 'legaladmin123') {
+        Alert.alert('Success', 'Welcome to the Admin Dashboard!');
+        navigation.navigate('Dashboard'); // Navigate to the Dashboard screen
+      } else {
+        Alert.alert('Error', 'Invalid email or password.');
+      }
+    }, 3000); // 3 seconds delay before checking credentials
   };
 
   return (
     <ImageBackground
-      source={require('../../../assets/log.jpg')} // Ensure this path matches your project structure
+      source={require('../../../assets/bccc.jpg')} // Ensure this path matches your project structure
       style={styles.background}
       resizeMode="cover"
     >
@@ -62,14 +67,13 @@ const LoginScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Forgot Password */}
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-
         {/* Login Button */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFF" /> // Show spinner when loading
+          ) : (
+            <Text style={styles.loginButtonText}>Login</Text> // Show text when not loading
+          )}
         </TouchableOpacity>
       </View>
     </ImageBackground>

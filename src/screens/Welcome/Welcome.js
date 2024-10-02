@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather'; 
-import BackgroundImage from '../../../assets/joel-de-vriend-0gogyddMLyc-unsplash.jpg'; 
+import BackgroundImage from '../../../assets/bc1.jpg'; 
 
 
 
@@ -9,7 +9,7 @@ const WelcomeScreen = ({ navigation }) => {
   return (
     <ImageBackground source={BackgroundImage} style={styles.background}>
       <View style={styles.container}>
-        <Text style={styles.text}>Welcome To DDS Admin</Text>
+        <Text style={styles.text}>Welcome TO LEGAL AID ADMIN</Text>
       </View>
       <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate('LoginScreen')}>
         <Icon name="arrow-right" size={80} color="white" /> 
@@ -30,10 +30,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontSize: 30,
+    fontSize: 50,
     marginBottom: 20,
-    color: 'white',
-    fontWeight:'bold'
+    color: 'lightblue',
+    fontWeight:'bold',
+    marginHorizontal:20
   },
   arrowContainer: {
     position: 'absolute',
